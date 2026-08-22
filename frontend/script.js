@@ -383,14 +383,12 @@ function appendBotMessage(data) {
 
     const formattedAnswer = renderMarkdown(data.answer);
     const stepsHtml = renderTransparencySteps(data.transparency_steps, data.elapsed_seconds);
-    const sourcesHtml = renderSourcesDrawer(data.sources);
 
     row.innerHTML = `
         <div class="avatar">CR</div>
         <div class="bubble">
             <div class="bot-answer-text">${formattedAnswer}</div>
             ${stepsHtml}
-            ${sourcesHtml}
         </div>
     `;
 
