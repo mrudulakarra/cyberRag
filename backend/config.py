@@ -24,6 +24,7 @@ PORT = int(os.getenv("PORT", "8000"))
 # Path Settings
 CHROMA_DB_DIR = BASE_DIR / os.getenv("CHROMA_DB_DIR", "chroma_storage")
 KNOWLEDGE_BASE_DIR = BASE_DIR / os.getenv("KNOWLEDGE_BASE_DIR", "knowledge_base")
+CHAT_HISTORY_DB_PATH = BASE_DIR / os.getenv("CHAT_HISTORY_DB_PATH", "chat_history.sqlite3")
 
 # RAG Hyperparameters
 RETRIEVAL_TOP_K = int(os.getenv("RETRIEVAL_TOP_K", "4"))

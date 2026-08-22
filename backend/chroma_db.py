@@ -99,6 +99,31 @@ class ChromaDBManager:
             "collection_name": self.COLLECTION_NAME
         }
 
+    def get_all_chunks(self) -> List[Dict[str, Any]]:
+        """Returns all documents, metadatas, and IDs stored in the collection."""
+        if self.collection.count() == 0:
+            return []
+        
+        data = self.collection.get(include=["documents", "metadatas"])
+        docs = data.get("documents", [])
+        metas = data.get("metadatas", [])
+        ids = data.get("ids", [])
+        
+        chunks = []
+        for doc_id, doc, meta in zip(ids, docs, metas):
+            meta = meta or {}
+            chunks.append({
+                "id": doc_id,
+                "text": doc,
+                "metadata": meta,
+                "source": meta.get("source", "Unknown Document"),
+                "title": meta.get("title", "Cybersecurity Document"),
+                "page": meta.get("page", "N/A"),
+                "file_type": meta.get("file_type", "txt"),
+                "char_length": len(doc)
+            })
+        return chunks
+
     def clear_collection(self):
         """Clears all data from the collection."""
         self.client.delete_collection(name=self.COLLECTION_NAME)

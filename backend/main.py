@@ -1,6 +1,7 @@
 import os
 import sys
 import shutil
+import json
 from pathlib import Path
 
 # Ensure root directory is in sys.path
@@ -15,7 +16,8 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel, Field
 
-from backend.config import KNOWLEDGE_BASE_DIR, HOST, PORT, is_gemini_configured, GEMINI_MODEL
+from backend.config import CHAT_HISTORY_DB_PATH, KNOWLEDGE_BASE_DIR, HOST, PORT, is_gemini_configured, GEMINI_MODEL
+from backend.chat_history import ChatHistoryStore
 from backend.document_processor import DocumentProcessor
 from backend.chroma_db import ChromaDBManager
 from backend.rag_pipeline import RAGPipeline
@@ -40,10 +42,12 @@ app.add_middleware(
 doc_processor = DocumentProcessor()
 db_manager = ChromaDBManager()
 rag_pipeline = RAGPipeline(db_manager)
+chat_history = ChatHistoryStore(CHAT_HISTORY_DB_PATH)
 
 # Request Models
 class ChatRequest(BaseModel):
     question: str = Field(..., min_length=2, max_length=1000, description="Student's cybersecurity question")
+    conversation_id: Optional[str] = Field(default=None, description="Existing conversation to continue")
 
 # Startup Event: Automatically ingest seed documents if ChromaDB is empty
 @app.on_event("startup")
@@ -100,14 +104,55 @@ def handle_chat_query(request: ChatRequest):
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
     try:
+        conversation = chat_history.get_conversation(request.conversation_id) if request.conversation_id else None
+        if request.conversation_id and conversation is None:
+            raise HTTPException(status_code=404, detail="Conversation not found.")
+
+        if conversation is None:
+            conversation = chat_history.create_conversation(question[:60] + ("..." if len(question) > 60 else ""))
+
+        chat_history.add_message(conversation["id"], "user", question)
         response = rag_pipeline.query(question)
+        chat_history.add_message(
+            conversation["id"],
+            "assistant",
+            response.get("answer", ""),
+            json.dumps({
+                "transparency_steps": response.get("transparency_steps", []),
+                "sources": response.get("sources", []),
+                "elapsed_seconds": response.get("elapsed_seconds"),
+            }),
+        )
+        response["conversation_id"] = conversation["id"]
         return response
+    except HTTPException:
+        raise
     except Exception as e:
         print(f"[ChatAPI Error] {e}")
         raise HTTPException(
             status_code=500,
             detail="An error occurred while processing your request through the CyberRAG pipeline."
         )
+
+@app.get("/api/conversations")
+def list_conversations():
+    """Returns saved conversations ordered by most recently updated."""
+    return {"conversations": chat_history.list_conversations()}
+
+@app.get("/api/conversations/{conversation_id}")
+def get_conversation(conversation_id: str):
+    """Returns one saved conversation and its messages."""
+    conversation = chat_history.get_conversation(conversation_id)
+    if conversation is None:
+        raise HTTPException(status_code=404, detail="Conversation not found.")
+    return conversation
+
+@app.delete("/api/conversations/{conversation_id}")
+def delete_conversation(conversation_id: str):
+    """Deletes a conversation and all of its messages."""
+    if not chat_history.delete_conversation(conversation_id):
+        raise HTTPException(status_code=404, detail="Conversation not found.")
+    return {"deleted": True, "conversation_id": conversation_id}
 
 @app.get("/api/documents")
 def list_documents():
@@ -160,6 +205,17 @@ async def upload_document(file: UploadFile = File(...)):
         print(f"[Upload Error] {e}")
         raise HTTPException(status_code=500, detail=f"Failed to process uploaded file: {str(e)}")
 
+@app.get("/api/vector-db/explorer")
+def explore_vector_database():
+    """Returns all indexed chunks, metadata, and collection stats from ChromaDB."""
+    chunks = db_manager.get_all_chunks()
+    stats = db_manager.get_stats()
+    return {
+        "total_chunks": len(chunks),
+        "stats": stats,
+        "chunks": chunks
+    }
+
 @app.post("/api/reindex")
 def trigger_reindex():
     """Re-indexes all documents in knowledge_base/."""
@@ -182,6 +238,10 @@ if frontend_dir.exists():
     @app.get("/")
     def serve_frontend_index():
         return FileResponse(frontend_dir / "index.html")
+
+    @app.get("/vector-explorer")
+    def serve_vector_explorer():
+        return FileResponse(frontend_dir / "vector_explorer.html")
 
 if __name__ == "__main__":
     import uvicorn
