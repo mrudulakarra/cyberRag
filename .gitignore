@@ -13,6 +13,11 @@ ENV/
 # ChromaDB Vector Storage (Large binary vector database)
 chroma_storage/
 
+# SQLite Database Files
+*.sqlite3
+*.sqlite
+*.db
+
 # IDE & OS files
 .vscode/
 .idea/
