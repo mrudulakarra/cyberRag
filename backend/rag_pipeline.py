@@ -6,14 +6,14 @@ from backend.chroma_db import ChromaDBManager
 class RAGPipeline:
     """Orchestrates document retrieval, context synthesis, Gemini LLM generation, and transparency logging."""
 
-    SYSTEM_PROMPT = """You are CyberRAG — a specialized Cybersecurity Learning Assistant.
+    SYSTEM_PROMPT = """You are CyberRAG — a friendly and educational Cybersecurity Assistance Chatbot.
 
-STRICT MANDATE:
-1. Answer the student's question STRICTLY and ONLY using the RETRIEVED KNOWLEDGE BASE CONTEXT provided below.
-2. If the answer to the student's question is NOT explicitly present in or directly supported by the retrieved context below, respond EXACTLY with:
+YOUR MANDATE:
+1. GREETINGS & BASIC CONVERSATION: If the student greets you (e.g., "hello", "hi", "hey", "good morning", "how are you") or asks basic conversational questions (e.g., "who are you", "what can you do"), respond warmly and introduce yourself as CyberRAG, your cybersecurity learning assistant.
+2. TECHNICAL QUESTIONS: For cybersecurity and technical questions, use the RETRIEVED KNOWLEDGE BASE CONTEXT provided below to answer clearly, accurately, and educationally using markdown headings, bullet points, and code snippets where applicable.
+3. STRICT GROUNDING: If a specific technical or security question is NOT answered in or supported by the provided context below, respond EXACTLY with:
    "I am sorry, but the answer to your question is not present in the provided knowledge base documents."
-3. Do NOT use any external or general knowledge outside the provided context. Do NOT guess or hallucinate.
-4. If the provided context DOES contain the answer, explain it clearly, accurately, and educationally using markdown headings and bullet points.
+4. Do NOT hallucinate facts, citations, or non-existent document contents outside the provided context.
 
 --- RETRIEVED KNOWLEDGE BASE CONTEXT ---
 {context}
@@ -21,7 +21,7 @@ STRICT MANDATE:
 
 STUDENT QUESTION: {question}
 
-Provide your grounded cybersecurity answer below:"""
+Provide your grounded answer below:"""
 
     NOT_FOUND_RESPONSE = "I am sorry, but the answer to your question is not present in the provided knowledge base documents."
 
@@ -93,7 +93,7 @@ Provide your grounded cybersecurity answer below:"""
         steps.append({
             "step": 4,
             "title": "Prompt & Context Synthesis",
-            "detail": f"Assembled context from {len(retrieved_chunks)} chunk(s) into strict RAG prompt template.",
+            "detail": f"Assembled context from {len(retrieved_chunks)} chunk(s) into RAG prompt template.",
             "status": "completed"
         })
 
@@ -105,7 +105,7 @@ Provide your grounded cybersecurity answer below:"""
             "status": "completed"
         })
 
-        # Generate answer using Gemini or strict fallback
+        # Generate answer using Gemini or fallback
         answer, used_llm = self._generate_response(question, retrieved_chunks)
 
         elapsed_sec = round(time.time() - start_time, 2)
@@ -130,13 +130,11 @@ Provide your grounded cybersecurity answer below:"""
         }
 
     def _generate_response(self, question: str, retrieved_chunks: List[Dict[str, Any]]) -> tuple[str, bool]:
-        """Calls Gemini API with retrieved context, or generates a strict fallback if knowledge is missing."""
-        if not retrieved_chunks:
-            return self.NOT_FOUND_RESPONSE, False
+        """Calls Gemini API with retrieved context, or generates a grounded response."""
+        q_clean = question.lower().strip()
+        is_greeting = q_clean in ["hi", "hello", "hey", "good morning", "good evening", "greetings", "how are you", "who are you", "what is cyberrag"]
 
-        # If similarity of top chunk is very low (e.g. < 30%), the document doesn't contain the answer
-        top_score = retrieved_chunks[0].get("score_pct", 0)
-        if top_score < 30:
+        if not retrieved_chunks and not is_greeting:
             return self.NOT_FOUND_RESPONSE, False
 
         # Build formatted context block
@@ -170,11 +168,11 @@ Provide your grounded cybersecurity answer below:"""
                 print(f"[RAGPipeline] Gemini API Error: {type(e).__name__}: {e}")
                 pass
 
-        # Offline / Fallback mode: Summarize retrieved chunks cleanly or return not found
-        paragraphs = []
-        for chunk in retrieved_chunks[:2]:
-            paragraphs.append(chunk['text'].strip())
-        
-        if paragraphs:
-            return "\n\n".join(paragraphs), False
+        # Offline / Fallback mode:
+        if is_greeting:
+            return "Hello! Welcome to CyberRAG. How can I assist you with your cybersecurity studies today?", False
+
+        if retrieved_chunks:
+            return retrieved_chunks[0]['text'].strip(), False
+
         return self.NOT_FOUND_RESPONSE, False
