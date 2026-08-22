@@ -372,6 +372,56 @@ body.cyber-theme {
     width: fit-content;
 }
 
+.stat-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+}
+
+.stat-icon-wrapper {
+    width: 42px;
+    height: 42px;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(15, 23, 42, 0.8);
+    border: 1px solid var(--border-color);
+    flex-shrink: 0;
+}
+
+.stat-icon-wrapper.cyan-glow {
+    color: var(--accent-cyan);
+    border-color: rgba(0, 240, 255, 0.35);
+    box-shadow: 0 0 12px rgba(0, 240, 255, 0.2);
+}
+
+.stat-icon-wrapper.emerald-glow {
+    color: var(--accent-emerald);
+    border-color: rgba(0, 255, 157, 0.35);
+    box-shadow: 0 0 12px rgba(0, 255, 157, 0.2);
+}
+
+.stat-icon-wrapper.purple-glow {
+    color: var(--accent-purple);
+    border-color: rgba(168, 85, 247, 0.35);
+    box-shadow: 0 0 12px rgba(168, 85, 247, 0.2);
+}
+
+.stat-meta {
+    display: flex;
+    flex-direction: column;
+}
+
+.svg-node-icon {
+    flex-shrink: 0;
+}
+
+.icon-emerald { color: var(--accent-emerald); filter: drop-shadow(0 0 4px var(--accent-emerald)); }
+.icon-purple { color: var(--accent-purple); filter: drop-shadow(0 0 4px var(--accent-purple)); }
+.icon-cyan { color: var(--accent-cyan); filter: drop-shadow(0 0 4px var(--accent-cyan)); }
+.icon-amber { color: var(--accent-amber); filter: drop-shadow(0 0 4px var(--accent-amber)); }
+
 /* 3D HERO GRAPHIC STYLES */
 .hero-visual {
     display: flex;
