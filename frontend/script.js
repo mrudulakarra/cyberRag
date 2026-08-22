@@ -157,14 +157,6 @@ async function uploadFile(file) {
 
 // --- CHAT INTERACTION LOGIC ---
 
-function sendQuickQuestion(questionText) {
-    navigateTo('chat');
-    const input = document.getElementById("chat-input");
-    input.value = questionText;
-    autoResizeTextarea(input);
-    document.getElementById("chat-form").dispatchEvent(new Event("submit"));
-}
-
 function startNewChat() {
     const messagesContainer = document.getElementById("chat-messages");
     messagesContainer.innerHTML = `
@@ -178,28 +170,6 @@ function startNewChat() {
             </div>
             <h2>Welcome to CyberRAG</h2>
             <p>Your grounded cybersecurity learning assistant. Ask any question to retrieve knowledge chunks and generate student-friendly explanations.</p>
-            <div class="welcome-cards">
-                <div class="welcome-card" onclick="sendQuickQuestion('What is SQL Injection and how can developers prevent it?')">
-                    <span class="wc-icon">🛡️</span>
-                    <h4>What is SQL Injection?</h4>
-                    <p>Learn mechanics, impact, and prepared statements defense.</p>
-                </div>
-                <div class="welcome-card" onclick="sendQuickQuestion('Explain the 3-way handshake of TCP step by step.')">
-                    <span class="wc-icon">🌐</span>
-                    <h4>TCP 3-Way Handshake</h4>
-                    <p>SYN, SYN-ACK, and ACK sequence explained.</p>
-                </div>
-                <div class="welcome-card" onclick="sendQuickQuestion('What is OS Credential Dumping in MITRE ATT&CK?')">
-                    <span class="wc-icon">⚔️</span>
-                    <h4>LSASS Credential Dumping</h4>
-                    <p>Mimikatz techniques, sub-techniques, and mitigations.</p>
-                </div>
-                <div class="welcome-card" onclick="sendQuickQuestion('What are the four phases of NIST Incident Response?')">
-                    <span class="wc-icon">🚨</span>
-                    <h4>Incident Response Lifecycle</h4>
-                    <p>Preparation, Detection, Containment, and Post-Incident.</p>
-                </div>
-            </div>
         </div>
     `;
 }

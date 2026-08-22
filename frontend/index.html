@@ -74,25 +74,48 @@
                 </div>
 
                 <!-- Hero Graphic -->
+                <!-- Hero Graphic (3D Orbit RAG Core) -->
                 <div class="hero-visual">
-                    <div class="knowledge-core" aria-label="Animated CyberRAG knowledge core">
-                        <div class="core-ring ring-outer"></div>
-                        <div class="core-ring ring-middle"></div>
-                        <div class="core-orbit orbit-one"><span class="orbit-dot"></span></div>
-                        <div class="core-orbit orbit-two"><span class="orbit-dot"></span></div>
-                        <div class="core-panel">
-                            <svg viewBox="0 0 24 24" width="80" height="80" stroke="currentColor" stroke-width="1.5" fill="none" class="shield-svg">
+                    <div class="cyber-3d-scene">
+                        <!-- 3D Orbit Rings -->
+                        <div class="orbit-ring orbit-ring-1">
+                            <div class="orbit-dot"></div>
+                        </div>
+                        <div class="orbit-ring orbit-ring-2">
+                            <div class="orbit-dot"></div>
+                        </div>
+
+                        <!-- Center Shield RAG Core -->
+                        <div class="rag-core-badge">
+                            <div class="core-glow"></div>
+                            <svg viewBox="0 0 24 24" width="52" height="52" stroke="currentColor" stroke-width="1.8" fill="none" class="core-shield-icon">
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                                 <circle cx="12" cy="11" r="3"/>
                                 <path d="M12 14v3"/>
                             </svg>
                             <span class="core-label">RAG CORE</span>
                         </div>
-                        <div class="core-node node-docs">PDFs &amp; Docs</div>
-                        <div class="core-node node-db">ChromaDB</div>
-                        <div class="core-node node-model">Gemini 3.6</div>
-                        <div class="core-node node-student">Student</div>
-                        <div class="core-scanline"></div>
+
+                        <!-- 4 Satellite Node Pills -->
+                        <div class="satellite-node node-top-left">
+                            <span class="node-icon">📚</span>
+                            <span class="node-text">PDFs & Docs</span>
+                        </div>
+
+                        <div class="satellite-node node-top-right">
+                            <span class="node-icon">🗄️</span>
+                            <span class="node-text">ChromaDB</span>
+                        </div>
+
+                        <div class="satellite-node node-bottom-left">
+                            <span class="node-icon">🤖</span>
+                            <span class="node-text">Gemini 3.6</span>
+                        </div>
+
+                        <div class="satellite-node node-bottom-right">
+                            <span class="node-icon">🎓</span>
+                            <span class="node-text">Student</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -368,36 +391,6 @@
                         <div class="status-subtext" id="system-status-subtext">ChromaDB Connected</div>
                     </div>
 
-                    <!-- Suggested Questions List -->
-                    <div class="sidebar-section">
-                        <div class="sidebar-title">Suggested Cybersecurity Questions</div>
-                        <div class="suggested-pills">
-                            <button class="pill-btn" onclick="sendQuickQuestion('What is SQL Injection?')">
-                                🛡️ What is SQL Injection?
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('Explain the difference between TCP and UDP.')">
-                                ⚡ TCP vs UDP Protocols
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('What is phishing?')">
-                                🎣 What is phishing?
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('Explain XSS and how to prevent it.')">
-                                💻 Explain XSS Attacks
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('What is ARP spoofing and how does it work?')">
-                                🌐 What is ARP Spoofing?
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('What is the OWASP Top 10?')">
-                                📜 OWASP Top 10 Overview
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('What ATT&CK technique is related to PowerShell?')">
-                                ⚔️ MITRE ATT&CK PowerShell
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('How does asymmetric encryption work?')">
-                                🔑 Symmetric vs Asymmetric Crypto
-                            </button>
-                        </div>
-                    </div>
                 </aside>
 
                 <!-- Sidebar Overlay for Mobile -->
@@ -435,28 +428,6 @@
                             <h2>Welcome to CyberRAG</h2>
                             <p>Your grounded cybersecurity learning assistant. Ask any question to retrieve knowledge chunks and generate student-friendly explanations.</p>
 
-                            <div class="welcome-cards">
-                                <div class="welcome-card" onclick="sendQuickQuestion('What is SQL Injection and how can developers prevent it?')">
-                                    <span class="wc-icon">🛡️</span>
-                                    <h4>What is SQL Injection?</h4>
-                                    <p>Learn mechanics, impact, and prepared statements defense.</p>
-                                </div>
-                                <div class="welcome-card" onclick="sendQuickQuestion('Explain the 3-way handshake of TCP step by step.')">
-                                    <span class="wc-icon">🌐</span>
-                                    <h4>TCP 3-Way Handshake</h4>
-                                    <p>SYN, SYN-ACK, and ACK sequence explained.</p>
-                                </div>
-                                <div class="welcome-card" onclick="sendQuickQuestion('What is OS Credential Dumping in MITRE ATT&CK?')">
-                                    <span class="wc-icon">⚔️</span>
-                                    <h4>LSASS Credential Dumping</h4>
-                                    <p>Mimikatz techniques, sub-techniques, and mitigations.</p>
-                                </div>
-                                <div class="welcome-card" onclick="sendQuickQuestion('What are the four phases of NIST Incident Response?')">
-                                    <span class="wc-icon">🚨</span>
-                                    <h4>Incident Response Lifecycle</h4>
-                                    <p>Preparation, Detection, Containment, and Post-Incident.</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
