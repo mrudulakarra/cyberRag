@@ -1,5 +1,3 @@
-let currentConversationId = null;
-
 /**
  * CyberRAG — Cybersecurity Assistance Chatbot
  * Vanilla JavaScript Single-Page App Controller
@@ -10,7 +8,6 @@ document.addEventListener("DOMContentLoaded", () => {
     initViewNavigation();
     checkSystemStatus();
     loadKnowledgeBaseDocs();
-    loadConversationHistory();
 });
 
 function initViewNavigation() {
@@ -31,7 +28,6 @@ function setActiveViewNav(viewName) {
 
 // --- NAVIGATION & ROUTER ---
 function navigateTo(viewName) {
-    const normalizedViewName = viewName === "landing" ? "overview" : viewName;
     const views = {
         overview: document.getElementById("landing-view"),
         "knowledge-base": document.getElementById("knowledge-base-view"),
@@ -39,26 +35,23 @@ function navigateTo(viewName) {
     };
 
     Object.values(views).forEach(view => view?.classList.remove("active"));
-    const targetView = views[normalizedViewName] || views.overview;
+    const targetView = views[viewName] || views.overview;
     targetView.classList.add("active");
 
-    if (normalizedViewName === "chat") {
+    if (viewName === "chat") {
         document.getElementById("chat-input").focus();
     } else {
-        setActiveViewNav(normalizedViewName);
-        if (normalizedViewName === "knowledge-base") loadKnowledgeBaseDocs();
+        setActiveViewNav(viewName);
+        if (viewName === "knowledge-base") loadKnowledgeBaseDocs();
     }
     window.scrollTo(0, 0);
 }
 
-function toggleSidebar(forceOpen) {
+function toggleSidebar() {
     const sidebar = document.getElementById("sidebar");
     const backdrop = document.querySelector(".sidebar-backdrop");
-    const shouldOpen = typeof forceOpen === "boolean"
-        ? forceOpen
-        : !sidebar.classList.contains("open");
-    sidebar.classList.toggle("open", shouldOpen);
-    if (backdrop) backdrop.classList.toggle("show", shouldOpen);
+    sidebar.classList.toggle("open");
+    if (backdrop) backdrop.classList.toggle("show");
 }
 
 // --- SYSTEM HEALTH & API STATS ---
@@ -173,7 +166,6 @@ function sendQuickQuestion(questionText) {
 }
 
 function startNewChat() {
-    currentConversationId = null;
     const messagesContainer = document.getElementById("chat-messages");
     messagesContainer.innerHTML = `
         <div class="chat-welcome" id="chat-welcome">
@@ -210,84 +202,6 @@ function startNewChat() {
             </div>
         </div>
     `;
-    setActiveHistoryItem();
-}
-
-async function loadConversationHistory() {
-    const container = document.getElementById("chat-history-list");
-    if (!container) return;
-
-    try {
-        const response = await fetch("/api/conversations");
-        if (!response.ok) throw new Error("History unavailable");
-        const data = await response.json();
-        const conversations = data.conversations || [];
-
-        if (conversations.length === 0) {
-            container.innerHTML = '<div class="history-empty">No saved chats yet.</div>';
-            return;
-        }
-
-        container.innerHTML = conversations.map(conversation => `
-            <div class="history-item ${conversation.id === currentConversationId ? "active" : ""}" data-conversation-id="${escapeHtml(conversation.id)}">
-                <button class="history-open" onclick="loadConversation('${conversation.id}')">
-                    <span class="history-title">${escapeHtml(conversation.title)}</span>
-                    <span class="history-meta">${conversation.message_count} messages</span>
-                </button>
-                <button class="history-delete" onclick="deleteConversation('${conversation.id}', event)" title="Delete conversation">×</button>
-            </div>
-        `).join("");
-    } catch (error) {
-        container.innerHTML = '<div class="history-empty">Unable to load chat history.</div>';
-    }
-}
-
-async function loadConversation(conversationId) {
-    try {
-        const response = await fetch(`/api/conversations/${conversationId}`);
-        if (!response.ok) throw new Error("Conversation unavailable");
-        const conversation = await response.json();
-        currentConversationId = conversation.id;
-
-        const messagesContainer = document.getElementById("chat-messages");
-        messagesContainer.innerHTML = "";
-        conversation.messages.forEach(message => {
-            if (message.role === "user") {
-                appendUserMessage(message.content);
-                return;
-            }
-
-            let metadata = {};
-            try {
-                metadata = message.metadata ? JSON.parse(message.metadata) : {};
-            } catch (error) {
-                metadata = {};
-            }
-            appendBotMessage({ answer: message.content, ...metadata });
-        });
-        setActiveHistoryItem();
-        toggleSidebar(false);
-    } catch (error) {
-        appendBotErrorMessage("This conversation could not be loaded.");
-    }
-}
-
-async function deleteConversation(conversationId, event) {
-    event.stopPropagation();
-    try {
-        const response = await fetch(`/api/conversations/${conversationId}`, { method: "DELETE" });
-        if (!response.ok) throw new Error("Delete failed");
-        if (currentConversationId === conversationId) startNewChat();
-        await loadConversationHistory();
-    } catch (error) {
-        appendBotErrorMessage("This conversation could not be deleted.");
-    }
-}
-
-function setActiveHistoryItem() {
-    document.querySelectorAll(".history-item").forEach(item => {
-        item.classList.toggle("active", item.dataset.conversationId === currentConversationId);
-    });
 }
 
 function handleKeyDown(event) {
@@ -326,7 +240,7 @@ async function handleChatSubmit(event) {
         const response = await fetch("/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question: question, conversation_id: currentConversationId })
+            body: JSON.stringify({ question: question })
         });
 
         hideTypingIndicator();
@@ -338,9 +252,7 @@ async function handleChatSubmit(event) {
         }
 
         const data = await response.json();
-        currentConversationId = data.conversation_id;
         appendBotMessage(data);
-        loadConversationHistory();
 
     } catch (error) {
         hideTypingIndicator();
