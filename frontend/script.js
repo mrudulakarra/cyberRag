@@ -5,25 +5,46 @@
 
 document.addEventListener("DOMContentLoaded", () => {
     initCanvasAnimation();
+    initViewNavigation();
     checkSystemStatus();
     loadKnowledgeBaseDocs();
 });
 
+function initViewNavigation() {
+    const navLinks = [...document.querySelectorAll('.nav-link[data-view]')];
+    navLinks.forEach(link => {
+        link.addEventListener('click', event => {
+            event.preventDefault();
+            navigateTo(link.dataset.view);
+        });
+    });
+}
+
+function setActiveViewNav(viewName) {
+    document.querySelectorAll('.nav-link[data-view]').forEach(link => {
+        link.classList.toggle('active', link.dataset.view === viewName);
+    });
+}
+
 // --- NAVIGATION & ROUTER ---
 function navigateTo(viewName) {
-    const landingView = document.getElementById("landing-view");
-    const chatView = document.getElementById("chat-view");
+    const views = {
+        overview: document.getElementById("landing-view"),
+        "knowledge-base": document.getElementById("knowledge-base-view"),
+        chat: document.getElementById("chat-view")
+    };
+
+    Object.values(views).forEach(view => view?.classList.remove("active"));
+    const targetView = views[viewName] || views.overview;
+    targetView.classList.add("active");
 
     if (viewName === "chat") {
-        landingView.classList.remove("active");
-        chatView.classList.add("active");
-        window.scrollTo(0, 0);
         document.getElementById("chat-input").focus();
     } else {
-        chatView.classList.remove("active");
-        landingView.classList.add("active");
-        window.scrollTo(0, 0);
+        setActiveViewNav(viewName);
+        if (viewName === "knowledge-base") loadKnowledgeBaseDocs();
     }
+    window.scrollTo(0, 0);
 }
 
 function toggleSidebar() {
