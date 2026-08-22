@@ -1,0 +1,20 @@
+# Environment variables (SECURITY: NEVER COMMIT API KEYS)
+.env
+
+# Python bytecode & cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.venv/
+venv/
+ENV/
+
+# ChromaDB Vector Storage (Large binary vector database)
+chroma_storage/
+
+# IDE & OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

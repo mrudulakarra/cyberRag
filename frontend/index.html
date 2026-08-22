@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberRAG — Cybersecurity Assistance Chatbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body class="cyber-theme">
+    <!-- Animated Cyber Canvas Background -->
+    <canvas id="cyber-canvas"></canvas>
+    <div class="grid-overlay"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <div id="app-container">
+
+        <!-- ==================== LANDING PAGE VIEW ==================== -->
+        <div id="landing-view" class="view-section active">
+            <!-- Header Navigation -->
+            <header class="navbar">
+                <div class="nav-brand" onclick="navigateTo('landing')">
+                    <div class="brand-icon">
+                        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none">
+                            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            <path d="M12 8v4"/>
+                            <path d="M12 16h.01"/>
+                        </svg>
+                    </div>
+                    <span class="brand-name">Cyber<span class="accent-text">RAG</span></span>
+                </div>
+                <nav class="nav-links">
+                    <a href="#overview" class="nav-link">Overview</a>
+                    <a href="#how-it-works" class="nav-link">How It Works</a>
+                    <a href="#architecture" class="nav-link">Architecture</a>
+                    <a href="#use-cases" class="nav-link">Use Cases</a>
+                    <a href="#knowledge-base" class="nav-link">Knowledge Base</a>
+                </nav>
+                <div class="nav-actions">
+                    <button class="btn btn-glow" onclick="navigateTo('chat')">
+                        <span>Launch Chatbot</span>
+                        <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                            <line x1="5" y1="12" x2="19" y2="12"></line>
+                            <polyline points="12 5 19 12 12 19"></polyline>
+                        </svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Hero Section -->
+            <section id="overview" class="hero-section">
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="pulse-dot"></span>
+                        <span>RETRIEVAL-AUGMENTED GENERATION FOR CYBERSECURITY STUDENTS</span>
+                    </div>
+                    <h1 class="hero-title">
+                        Cyber<span class="accent-text">RAG</span> — Cybersecurity Assistance Chatbot
+                    </h1>
+                    <p class="hero-subtitle">
+                        Ask cybersecurity questions and get clear, grounded answers powered by Retrieval-Augmented Generation and a managed cybersecurity knowledge base.
+                    </p>
+                    <div class="hero-cta-group">
+                        <button class="btn btn-primary btn-lg" onclick="navigateTo('chat')">
+                            <span>Start Learning</span>
+                            <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                                <path d="M5 12h14M12 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                        <a href="#how-it-works" class="btn btn-outline btn-lg">
+                            <span>Explore How It Works</span>
+                        </a>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat-pill">
+                            <span class="stat-value" id="stat-chunks">--</span>
+                            <span class="stat-label">Vector Chunks</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-pill">
+                            <span class="stat-value" id="stat-docs">--</span>
+                            <span class="stat-label">Knowledge Docs</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-pill">
+                            <span class="stat-value" id="stat-model">Gemini 3.6</span>
+                            <span class="stat-label">LLM Engine</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hero Graphic -->
+                <div class="hero-visual">
+                    <div class="cyber-shield-card">
+                        <div class="shield-halo"></div>
+                        <div class="shield-inner">
+                            <svg viewBox="0 0 24 24" width="80" height="80" stroke="currentColor" stroke-width="1.5" fill="none" class="shield-svg">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                <circle cx="12" cy="11" r="3"/>
+                                <path d="M12 14v3"/>
+                            </svg>
+                            <div class="cyber-nodes">
+                                <span class="node n1">PDFs & Docs</span>
+                                <span class="node n2">ChromaDB</span>
+                                <span class="node n3">Gemini 3.6</span>
+                                <span class="node n4">Student</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- What is CyberRAG Section -->
+            <section class="section container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">What is CyberRAG?</h2>
+                    <p class="section-description">
+                        CyberRAG is a cybersecurity assistance chatbot that uses Retrieval-Augmented Generation (RAG) to help cybersecurity students find, understand, and master complex security concepts from a managed knowledge base.
+                    </p>
+                </div>
+
+                <!-- Concept Flow Banner -->
+                <div class="concept-banner">
+                    <div class="concept-step">
+                        <div class="step-icon">📚</div>
+                        <div class="step-name">Knowledge Base</div>
+                    </div>
+                    <div class="concept-arrow">➔</div>
+                    <div class="concept-step">
+                        <div class="step-icon">🔍</div>
+                        <div class="step-name">Vector Retrieval</div>
+                    </div>
+                    <div class="concept-arrow">➔</div>
+                    <div class="concept-step">
+                        <div class="step-icon">📑</div>
+                        <div class="step-name">Relevant Context</div>
+                    </div>
+                    <div class="concept-arrow">➔</div>
+                    <div class="concept-step">
+                        <div class="step-icon">🤖</div>
+                        <div class="step-name">Gemini AI</div>
+                    </div>
+                    <div class="concept-arrow">➔</div>
+                    <div class="concept-step">
+                        <div class="step-icon">💡</div>
+                        <div class="step-name">Clear Answer</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Why CyberRAG Section -->
+            <section class="section container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">Why CyberRAG?</h2>
+                    <p class="section-description">Built specifically to solve cybersecurity learning challenges with grounded document retrieval.</p>
+                </div>
+
+                <div class="grid grid-3">
+                    <div class="card feature-card">
+                        <div class="card-icon">⚡</div>
+                        <h3>Faster Learning</h3>
+                        <p>Ask questions naturally instead of manually scanning through hundreds of pages of security documentation and standards.</p>
+                    </div>
+                    <div class="card feature-card">
+                        <div class="card-icon">🎯</div>
+                        <h3>Focused Knowledge</h3>
+                        <p>Operates over curated cybersecurity documents (OWASP, MITRE ATT&CK, Networking, Linux) rather than generic internet data.</p>
+                    </div>
+                    <div class="card feature-card">
+                        <div class="card-icon">🛡️</div>
+                        <h3>Grounded Responses</h3>
+                        <p>Relevant cybersecurity document chunks are retrieved first to supply verifiable context before generating student answers.</p>
+                    </div>
+                    <div class="card feature-card">
+                        <div class="card-icon">📚</div>
+                        <h3>Expandable Knowledge Base</h3>
+                        <p>Easily upload new PDFs, lab notes, Word documents (.docx, .doc), and security frameworks to continuously grow the system's expertise.</p>
+                    </div>
+                    <div class="card feature-card">
+                        <div class="card-icon">🧠</div>
+                        <h3>Student-Friendly Explanations</h3>
+                        <p>Complex attack vectors, cryptographic math, and network handshakes explained in clear, structured markdown.</p>
+                    </div>
+                    <div class="card feature-card highlight-card">
+                        <div class="card-icon">🔍</div>
+                        <h3>RAG Transparency</h3>
+                        <p>Inspect exact source documents, page numbers, match scores, and step-by-step retrieval execution for complete visibility.</p>
+                    </div>
+                </div>
+
+                <div class="disclaimer-banner margin-top-lg">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                        <circle cx="12" cy="12" r="10"/>
+                        <line x1="12" y1="8" x2="12"/>
+                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                    </svg>
+                    <span><strong>Academic Note:</strong> RAG improves grounding by referencing document chunks, but does not guarantee that every generated answer is completely error-free. Verify critical concepts.</span>
+                </div>
+            </section>
+
+            <!-- How CyberRAG Works Section -->
+            <section id="how-it-works" class="section container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">How CyberRAG Works</h2>
+                    <p class="section-description">The complete end-to-end data processing and query execution flow.</p>
+                </div>
+
+                <div class="pipeline-flow">
+                    <div class="flow-step">
+                        <div class="flow-number">01</div>
+                        <div class="flow-body">
+                            <h4>Cybersecurity Documents</h4>
+                            <p>Upload PDFs, Word (.docx, .doc), markdown notes, OWASP documentation, or MITRE ATT&CK materials.</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">02</div>
+                        <div class="flow-body">
+                            <h4>Text Processing</h4>
+                            <p>Extract clean text and structure from uploaded documents while stripping noise.</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">03</div>
+                        <div class="flow-body">
+                            <h4>Chunking & Metadata</h4>
+                            <p>Split documents into overlapping semantic chunks tagged with source name, page numbers, and IDs.</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">04</div>
+                        <div class="flow-body">
+                            <h4>Embedding Generation</h4>
+                            <p>Convert text chunks into high-dimensional vector representations capturing semantic meaning.</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">05</div>
+                        <div class="flow-body">
+                            <h4>ChromaDB Vector Store</h4>
+                            <p>Store vectors, raw text snippets, and document metadata inside persistent ChromaDB collections.</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">06</div>
+                        <div class="flow-body">
+                            <h4>Student Question</h4>
+                            <p>Student submits a cybersecurity query via the modern interactive chat interface.</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">07</div>
+                        <div class="flow-body">
+                            <h4>Similarity Search</h4>
+                            <p>Execute vector distance match in ChromaDB to retrieve top matching document chunks.</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">08</div>
+                        <div class="flow-body">
+                            <h4>Gemini 3.6 API Generation</h4>
+                            <p>Supply retrieved context and query to Google Gemini with a Cybersecurity Assistant prompt.</p>
+                        </div>
+                    </div>
+                    <div class="flow-step">
+                        <div class="flow-number">09</div>
+                        <div class="flow-body">
+                            <h4>Grounded Response</h4>
+                            <p>Display structured answer in CyberRAG chat alongside transparency steps and source citations.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- System Architecture Section -->
+            <section id="architecture" class="section container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">System Architecture</h2>
+                    <p class="section-description">Modular design separating presentation, orchestration, vector storage, and LLM inference.</p>
+                </div>
+
+                <div class="architecture-box">
+                    <div class="arch-layer arch-client">
+                        <div class="arch-tag">Frontend Presentation Layer</div>
+                        <div class="arch-node">
+                            <span class="node-title">HTML5 + CSS3 + Vanilla JavaScript</span>
+                            <span class="node-desc">Single-Page App, Glassmorphism UI, Responsive Chat, RAG Transparency Panel</span>
+                        </div>
+                    </div>
+
+                    <div class="arch-connector">↓ HTTP REST API Requests (`/api/chat`, `/api/upload`, `/api/health`) ↓</div>
+
+                    <div class="arch-layer arch-server">
+                        <div class="arch-tag">FastAPI Application Server</div>
+                        <div class="arch-node">
+                            <span class="node-title">FastAPI Backend (Python 3.12)</span>
+                            <span class="node-desc">Document Processor (`pypdf`, `python-docx`), RAG Pipeline Engine, API Key Protection</span>
+                        </div>
+                    </div>
+
+                    <div class="arch-connector">↙ Parallel Component Invocations ↘</div>
+
+                    <div class="arch-split">
+                        <div class="arch-layer arch-db">
+                            <div class="arch-tag">Vector Storage Layer</div>
+                            <div class="arch-node">
+                                <span class="node-title">ChromaDB Persistent Store</span>
+                                <span class="node-desc">Vector Embeddings, Metadata Indexing, Similarity Search</span>
+                            </div>
+                        </div>
+
+                        <div class="arch-layer arch-llm">
+                            <div class="arch-tag">Generative LLM Engine</div>
+                            <div class="arch-node">
+                                <span class="node-title">Google Gemini API</span>
+                                <span class="node-desc">`gemini-3.6-flash` Grounded Response Generation</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cybersecurity Use Cases Section -->
+            <section id="use-cases" class="section container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">Cybersecurity Use Cases</h2>
+                    <p class="section-description">Explore what cybersecurity topics students can master using CyberRAG.</p>
+                </div>
+
+                <div class="grid grid-3">
+                    <div class="usecase-card">
+                        <div class="usecase-badge">Web Security</div>
+                        <h3>OWASP Vulnerabilities</h3>
+                        <p>Deep-dive into SQL Injection, Cross-Site Scripting (XSS), CSRF, SSRF, Broken Access Control, and remediation code.</p>
+                    </div>
+                    <div class="usecase-card">
+                        <div class="usecase-badge">Threat Intel</div>
+                        <h3>MITRE ATT&CK Framework</h3>
+                        <p>Explore adversary tactics (Initial Access, Execution, Persistence) and specific sub-techniques like PowerShell execution.</p>
+                    </div>
+                    <div class="usecase-card">
+                        <div class="usecase-badge">Networking</div>
+                        <h3>Network Security Protocols</h3>
+                        <p>Understand OSI vs TCP/IP models, TCP 3-way handshakes, UDP streaming, DNS spoofing, and ARP poisoning attacks.</p>
+                    </div>
+                    <div class="usecase-card">
+                        <div class="usecase-badge">OS Security</div>
+                        <h3>Linux Hardening & IR</h3>
+                        <p>Learn SUID permissions, SSH hardening, `/var/log/auth.log` analysis, and NIST Incident Response lifecycle phases.</p>
+                    </div>
+                    <div class="usecase-card">
+                        <div class="usecase-badge">Crypto</div>
+                        <h3>Cryptography Essentials</h3>
+                        <p>Study symmetric vs asymmetric encryption (AES-256, RSA), SHA-256 hashing, TLS 1.3 handshakes, and JWT authentication.</p>
+                    </div>
+                    <div class="usecase-card">
+                        <div class="usecase-badge">Exam Prep</div>
+                        <h3>Security Revision & Q&A</h3>
+                        <p>Prepare for cybersecurity course exams and security certifications (CompTIA Security+, CEH, EJPT, CISSP concepts).</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Knowledge Base Section & Upload -->
+            <section id="knowledge-base" class="section container">
+                <div class="section-header text-center">
+                    <h2 class="section-title">Managed Knowledge Base</h2>
+                    <p class="section-description">Inspect currently indexed cybersecurity documents or upload new PDF, DOCX, or TXT materials.</p>
+                </div>
+
+                <div class="kb-wrapper">
+                    <!-- Currently Indexed Documents List -->
+                    <div class="kb-panel">
+                        <div class="panel-header">
+                            <h3>Currently Indexed Documents</h3>
+                            <button class="btn btn-sm btn-outline" onclick="loadKnowledgeBaseDocs()">
+                                🔄 Refresh List
+                            </button>
+                        </div>
+                        <div id="kb-files-list" class="kb-files-list">
+                            <div class="kb-loading">Loading knowledge base files...</div>
+                        </div>
+                    </div>
+
+                    <!-- Upload New Document Form -->
+                    <div class="kb-panel">
+                        <div class="panel-header">
+                            <h3>Add Document to Knowledge Base</h3>
+                        </div>
+                        <div class="upload-dropzone" id="dropzone">
+                            <input type="file" id="file-input" accept=".pdf,.md,.txt,.docx,.doc" style="display:none;" onchange="handleFileSelected(event)">
+                            <div class="dropzone-content" onclick="document.getElementById('file-input').click()">
+                                <div class="drop-icon">📁</div>
+                                <h4>Click or Drag & Drop File Here</h4>
+                                <p>Supports PDF, Word (.docx, .doc), Markdown (.md), and Text (.txt) files</p>
+                            </div>
+                        </div>
+                        <div id="upload-status" class="upload-status"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="footer">
+                <div class="container footer-content">
+                    <div class="footer-brand">
+                        <span class="brand-name">Cyber<span class="accent-text">RAG</span></span>
+                        <p>Cybersecurity Assistance Chatbot for Students</p>
+                    </div>
+                    <div class="footer-note">
+                        <p>🔒 <strong>Security Note:</strong> CyberRAG provides educational assistance. Generated answers should be verified when accuracy is critical.</p>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <!-- ==================== LIVE CHAT VIEW ==================== -->
+        <div id="chat-view" class="view-section">
+            <div class="chat-workspace">
+                
+                <!-- Left Sidebar -->
+                <aside class="chat-sidebar" id="sidebar">
+                    <div class="sidebar-header">
+                        <div class="sidebar-brand" onclick="navigateTo('landing')">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                            </svg>
+                            <span>Cyber<span class="accent-text">RAG</span></span>
+                        </div>
+                        <button class="btn-icon mobile-only" onclick="toggleSidebar()">✕</button>
+                    </div>
+
+                    <div class="sidebar-actions">
+                        <button class="btn btn-glow btn-full" onclick="startNewChat()">
+                            <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span>New Chat</span>
+                        </button>
+                        
+                        <button class="btn btn-outline btn-full margin-top-xs" onclick="navigateTo('landing')">
+                            <span>← Back to Landing Page</span>
+                        </button>
+                    </div>
+
+                    <!-- System Status Indicator -->
+                    <div class="sidebar-status">
+                        <div class="status-indicator">
+                            <span class="status-dot" id="system-status-dot"></span>
+                            <span id="system-status-text">Checking System...</span>
+                        </div>
+                        <div class="status-subtext" id="system-status-subtext">ChromaDB Connected</div>
+                    </div>
+
+                    <!-- Suggested Questions List -->
+                    <div class="sidebar-section">
+                        <div class="sidebar-title">Suggested Cybersecurity Questions</div>
+                        <div class="suggested-pills">
+                            <button class="pill-btn" onclick="sendQuickQuestion('What is SQL Injection?')">
+                                🛡️ What is SQL Injection?
+                            </button>
+                            <button class="pill-btn" onclick="sendQuickQuestion('Explain the difference between TCP and UDP.')">
+                                ⚡ TCP vs UDP Protocols
+                            </button>
+                            <button class="pill-btn" onclick="sendQuickQuestion('What is phishing?')">
+                                🎣 What is phishing?
+                            </button>
+                            <button class="pill-btn" onclick="sendQuickQuestion('Explain XSS and how to prevent it.')">
+                                💻 Explain XSS Attacks
+                            </button>
+                            <button class="pill-btn" onclick="sendQuickQuestion('What is ARP spoofing and how does it work?')">
+                                🌐 What is ARP Spoofing?
+                            </button>
+                            <button class="pill-btn" onclick="sendQuickQuestion('What is the OWASP Top 10?')">
+                                📜 OWASP Top 10 Overview
+                            </button>
+                            <button class="pill-btn" onclick="sendQuickQuestion('What ATT&CK technique is related to PowerShell?')">
+                                ⚔️ MITRE ATT&CK PowerShell
+                            </button>
+                            <button class="pill-btn" onclick="sendQuickQuestion('How does asymmetric encryption work?')">
+                                🔑 Symmetric vs Asymmetric Crypto
+                            </button>
+                        </div>
+                    </div>
+                </aside>
+
+                <!-- Sidebar Overlay for Mobile -->
+                <div class="sidebar-backdrop" onclick="toggleSidebar()"></div>
+
+                <!-- Main Chat View -->
+                <main class="chat-main">
+                    <!-- Chat Top Bar -->
+                    <div class="chat-topbar">
+                        <button class="btn-icon mobile-only" onclick="toggleSidebar()">
+                            <svg viewBox="0 0 24 24" width="22" height="22" stroke="currentColor" stroke-width="2" fill="none">
+                                <line x1="3" y1="12" x2="21" y2="12"/>
+                                <line x1="3" y1="6" x2="21" y2="6"/>
+                                <line x1="3" y1="18" x2="21" y2="18"/>
+                            </svg>
+                        </button>
+                        <div class="topbar-title">
+                            <span class="chat-title-brand">CyberRAG Chat Assistant</span>
+                            <span class="chat-status-badge">RAG Active</span>
+                        </div>
+                        <button class="btn btn-sm btn-outline" onclick="startNewChat()">Clear Chat</button>
+                    </div>
+
+                    <!-- Chat Messages Container -->
+                    <div class="chat-messages" id="chat-messages">
+                        <!-- Welcome Screen (Shown on empty chat) -->
+                        <div class="chat-welcome" id="chat-welcome">
+                            <div class="welcome-icon">
+                                <svg viewBox="0 0 24 24" width="48" height="48" stroke="currentColor" stroke-width="1.5" fill="none">
+                                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                                    <path d="M12 8v4"/>
+                                    <path d="M12 16h.01"/>
+                                </svg>
+                            </div>
+                            <h2>Welcome to CyberRAG</h2>
+                            <p>Your grounded cybersecurity learning assistant. Ask any question to retrieve knowledge chunks and generate student-friendly explanations.</p>
+
+                            <div class="welcome-cards">
+                                <div class="welcome-card" onclick="sendQuickQuestion('What is SQL Injection and how can developers prevent it?')">
+                                    <span class="wc-icon">🛡️</span>
+                                    <h4>What is SQL Injection?</h4>
+                                    <p>Learn mechanics, impact, and prepared statements defense.</p>
+                                </div>
+                                <div class="welcome-card" onclick="sendQuickQuestion('Explain the 3-way handshake of TCP step by step.')">
+                                    <span class="wc-icon">🌐</span>
+                                    <h4>TCP 3-Way Handshake</h4>
+                                    <p>SYN, SYN-ACK, and ACK sequence explained.</p>
+                                </div>
+                                <div class="welcome-card" onclick="sendQuickQuestion('What is OS Credential Dumping in MITRE ATT&CK?')">
+                                    <span class="wc-icon">⚔️</span>
+                                    <h4>LSASS Credential Dumping</h4>
+                                    <p>Mimikatz techniques, sub-techniques, and mitigations.</p>
+                                </div>
+                                <div class="welcome-card" onclick="sendQuickQuestion('What are the four phases of NIST Incident Response?')">
+                                    <span class="wc-icon">🚨</span>
+                                    <h4>Incident Response Lifecycle</h4>
+                                    <p>Preparation, Detection, Containment, and Post-Incident.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Typing Indicator -->
+                    <div class="typing-indicator" id="typing-indicator" style="display:none;">
+                        <div class="typing-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <span class="typing-text" id="typing-text">Searching cybersecurity knowledge base...</span>
+                    </div>
+
+                    <!-- Chat Input Area -->
+                    <div class="chat-input-area">
+                        <form id="chat-form" onsubmit="handleChatSubmit(event)">
+                            <div class="input-wrapper">
+                                <textarea 
+                                    id="chat-input" 
+                                    placeholder="Ask a cybersecurity question..." 
+                                    rows="1"
+                                    onkeydown="handleKeyDown(event)"
+                                    oninput="autoResizeTextarea(this)"></textarea>
+                                <button type="submit" class="send-btn" id="send-btn" title="Send Question">
+                                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none">
+                                        <line x1="22" y1="2" x2="11" y2="13"/>
+                                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </form>
+                        <div class="input-footer">
+                            <span>CyberRAG provides educational assistance. Generated answers should be verified when accuracy is critical.</span>
+                        </div>
+                    </div>
+                </main>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
