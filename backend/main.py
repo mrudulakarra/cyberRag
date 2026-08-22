@@ -19,6 +19,7 @@ from backend.config import KNOWLEDGE_BASE_DIR, HOST, PORT, is_gemini_configured,
 from backend.document_processor import DocumentProcessor
 from backend.chroma_db import ChromaDBManager
 from backend.rag_pipeline import RAGPipeline
+from backend.chat_history import history_db
 
 # Initialize FastAPI App
 app = FastAPI(
@@ -44,39 +45,39 @@ rag_pipeline = RAGPipeline(db_manager)
 # Request Models
 class ChatRequest(BaseModel):
     question: str = Field(..., min_length=2, max_length=1000, description="Student's cybersecurity question")
+    session_id: Optional[str] = Field(None, description="Optional chat session ID for persistent history")
 
 # Startup Event: Automatically ingest seed documents if ChromaDB is empty
 @app.on_event("startup")
 def auto_ingest_knowledge_base():
-    print("[CyberRAG] Initializing server...")
+    """Runs on backend startup to ensure seed documents are indexed."""
     stats = db_manager.get_stats()
     if stats["total_chunks"] == 0:
-        print("[CyberRAG] ChromaDB is empty. Ingesting seed documents from knowledge_base/...")
-        ingest_all_documents()
-    else:
-        print(f"[CyberRAG] ChromaDB ready with {stats['total_chunks']} chunks from {stats['unique_documents']} document(s).")
+        print("[Startup] ChromaDB is empty. Ingesting seed documents from knowledge_base/...")
+        chunks_indexed = ingest_all_documents()
+        print(f"[Startup] Ingestion complete. Indexed {chunks_indexed} chunks.")
 
 def ingest_all_documents() -> int:
     """Helper function to process and index all files in knowledge_base/."""
-    total_added = 0
+    all_chunks = []
     if not KNOWLEDGE_BASE_DIR.exists():
+        KNOWLEDGE_BASE_DIR.mkdir(parents=True, exist_ok=True)
         return 0
 
     for file_path in KNOWLEDGE_BASE_DIR.glob("*"):
         if file_path.is_file() and file_path.suffix.lower() in [".pdf", ".md", ".txt", ".docx", ".doc"]:
-            print(f"[Ingest] Processing {file_path.name}...")
             chunks = doc_processor.process_file(file_path)
-            added = db_manager.add_chunks(chunks)
-            total_added += added
-            print(f"[Ingest] Added {added} chunks from {file_path.name}")
+            all_chunks.extend(chunks)
 
-    return total_added
+    if all_chunks:
+        return db_manager.add_chunks(all_chunks)
+    return 0
 
 # --- API ENDPOINTS ---
 
 @app.get("/api/health")
-def get_health_status():
-    """Returns system status, ChromaDB stats, and Gemini API configuration state."""
+def health_check():
+    """Returns backend system status and vector database statistics."""
     db_stats = db_manager.get_stats()
     return {
         "status": "online",
@@ -94,13 +95,24 @@ def get_health_status():
 
 @app.post("/api/chat")
 def handle_chat_query(request: ChatRequest):
-    """Processes a student's cybersecurity question through the RAG pipeline."""
+    """Processes a student's cybersecurity question through the RAG pipeline with persistent session history."""
     question = request.question.strip()
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
+    session_id = request.session_id or history_db.create_session(initial_title=question)
+
     try:
+        # Record user message in persistent SQLite history
+        history_db.add_message(session_id, "user", {"question": question}, auto_update_title=True)
+
+        # Execute RAG query
         response = rag_pipeline.query(question)
+        response["session_id"] = session_id
+
+        # Record bot response in persistent SQLite history
+        history_db.add_message(session_id, "bot", response)
+
         return response
     except Exception as e:
         print(f"[ChatAPI Error] {e}")
@@ -108,6 +120,30 @@ def handle_chat_query(request: ChatRequest):
             status_code=500,
             detail="An error occurred while processing your request through the CyberRAG pipeline."
         )
+
+# --- CHAT HISTORY REST ENDPOINTS ---
+@app.get("/api/history")
+def get_chat_history_sessions():
+    """Returns list of past chat sessions."""
+    return {"sessions": history_db.get_sessions()}
+
+@app.get("/api/history/{session_id}")
+def get_chat_session_messages(session_id: str):
+    """Returns all stored messages for a specific session."""
+    messages = history_db.get_session_messages(session_id)
+    return {"session_id": session_id, "messages": messages}
+
+@app.delete("/api/history/{session_id}")
+def delete_chat_session(session_id: str):
+    """Deletes a specific chat session."""
+    history_db.delete_session(session_id)
+    return {"message": "Session deleted successfully", "session_id": session_id}
+
+@app.delete("/api/history")
+def clear_all_chat_history():
+    """Clears all chat history."""
+    history_db.clear_all_history()
+    return {"message": "All chat history cleared successfully."}
 
 @app.get("/api/documents")
 def list_documents():

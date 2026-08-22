@@ -57,42 +57,105 @@
 
                     <div class="hero-stats">
                         <div class="stat-pill">
-                            <span class="stat-value" id="stat-chunks">--</span>
-                            <span class="stat-label">Vector Chunks</span>
+                            <div class="stat-icon-wrapper cyan-glow">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                                    <rect x="2" y="2" width="8" height="8" rx="2"/>
+                                    <rect x="14" y="2" width="8" height="8" rx="2"/>
+                                    <rect x="2" y="14" width="8" height="8" rx="2"/>
+                                    <rect x="14" y="14" width="8" height="8" rx="2"/>
+                                    <path d="M6 10v4M18 10v4M10 6h4M10 18h4"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content-inline">
+                                <span class="stat-value" id="stat-chunks">--</span>
+                                <span class="stat-text-single">Vector Chunks</span>
+                            </div>
                         </div>
                         <div class="stat-divider"></div>
                         <div class="stat-pill">
-                            <span class="stat-value" id="stat-docs">--</span>
-                            <span class="stat-label">Knowledge Docs</span>
+                            <div class="stat-icon-wrapper emerald-glow">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                    <line x1="16" y1="13" x2="8" y2="13"/>
+                                    <line x1="16" y1="17" x2="8" y2="17"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content-inline">
+                                <span class="stat-value" id="stat-docs">--</span>
+                                <span class="stat-text-single">Knowledge Docs</span>
+                            </div>
                         </div>
                         <div class="stat-divider"></div>
                         <div class="stat-pill">
-                            <span class="stat-value" id="stat-model">Gemini 3.6</span>
-                            <span class="stat-label">LLM Engine</span>
+                            <div class="stat-icon-wrapper purple-glow">
+                                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2" fill="none">
+                                    <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                                </svg>
+                            </div>
+                            <div class="stat-content-inline">
+                                <span class="stat-value" id="stat-model">Gemini 3.6</span>
+                                <span class="stat-text-single">LLM Engine</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Hero Graphic -->
+                <!-- Hero Graphic (3D Orbit RAG Core) -->
                 <div class="hero-visual">
-                    <div class="knowledge-core" aria-label="Animated CyberRAG knowledge core">
-                        <div class="core-ring ring-outer"></div>
-                        <div class="core-ring ring-middle"></div>
-                        <div class="core-orbit orbit-one"><span class="orbit-dot"></span></div>
-                        <div class="core-orbit orbit-two"><span class="orbit-dot"></span></div>
-                        <div class="core-panel">
-                            <svg viewBox="0 0 24 24" width="80" height="80" stroke="currentColor" stroke-width="1.5" fill="none" class="shield-svg">
+                    <div class="cyber-3d-scene">
+                        <!-- 3D Orbit Rings -->
+                        <div class="orbit-ring orbit-ring-1">
+                            <div class="orbit-dot"></div>
+                        </div>
+                        <div class="orbit-ring orbit-ring-2">
+                            <div class="orbit-dot"></div>
+                        </div>
+
+                        <!-- Center Shield RAG Core -->
+                        <div class="rag-core-badge">
+                            <div class="core-glow"></div>
+                            <svg viewBox="0 0 24 24" width="52" height="52" stroke="currentColor" stroke-width="1.8" fill="none" class="core-shield-icon">
                                 <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
                                 <circle cx="12" cy="11" r="3"/>
                                 <path d="M12 14v3"/>
                             </svg>
                             <span class="core-label">RAG CORE</span>
                         </div>
-                        <div class="core-node node-docs">PDFs &amp; Docs</div>
-                        <div class="core-node node-db">ChromaDB</div>
-                        <div class="core-node node-model">Gemini 3.6</div>
-                        <div class="core-node node-student">Student</div>
-                        <div class="core-scanline"></div>
+
+                        <!-- 4 Satellite Node Pills with Official SVG Icons -->
+                        <div class="satellite-node node-top-left">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" class="svg-node-icon icon-emerald">
+                                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                <polyline points="14 2 14 8 20 8"/>
+                            </svg>
+                            <span class="node-text">PDFs & Docs</span>
+                        </div>
+
+                        <div class="satellite-node node-top-right">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" class="svg-node-icon icon-purple">
+                                <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                                <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                                <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                            </svg>
+                            <span class="node-text">ChromaDB</span>
+                        </div>
+
+                        <div class="satellite-node node-bottom-left">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" class="svg-node-icon icon-cyan">
+                                <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2zm0 18a8 8 0 1 1 8-8 8 8 0 0 1-8 8z"/>
+                                <circle cx="12" cy="12" r="3"/>
+                            </svg>
+                            <span class="node-text">Gemini 3.6</span>
+                        </div>
+
+                        <div class="satellite-node node-bottom-right">
+                            <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" class="svg-node-icon icon-amber">
+                                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                                <circle cx="12" cy="7" r="4"/>
+                            </svg>
+                            <span class="node-text">Student</span>
+                        </div>
                     </div>
                 </div>
             </section>
@@ -368,36 +431,17 @@
                         <div class="status-subtext" id="system-status-subtext">ChromaDB Connected</div>
                     </div>
 
-                    <!-- Suggested Questions List -->
+                    <!-- Persistent Chat History Section -->
                     <div class="sidebar-section">
-                        <div class="sidebar-title">Suggested Cybersecurity Questions</div>
-                        <div class="suggested-pills">
-                            <button class="pill-btn" onclick="sendQuickQuestion('What is SQL Injection?')">
-                                🛡️ What is SQL Injection?
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('Explain the difference between TCP and UDP.')">
-                                ⚡ TCP vs UDP Protocols
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('What is phishing?')">
-                                🎣 What is phishing?
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('Explain XSS and how to prevent it.')">
-                                💻 Explain XSS Attacks
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('What is ARP spoofing and how does it work?')">
-                                🌐 What is ARP Spoofing?
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('What is the OWASP Top 10?')">
-                                📜 OWASP Top 10 Overview
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('What ATT&CK technique is related to PowerShell?')">
-                                ⚔️ MITRE ATT&CK PowerShell
-                            </button>
-                            <button class="pill-btn" onclick="sendQuickQuestion('How does asymmetric encryption work?')">
-                                🔑 Symmetric vs Asymmetric Crypto
-                            </button>
+                        <div class="sidebar-title-row">
+                            <div class="sidebar-title">Chat History</div>
+                            <button class="btn-clear-history" onclick="clearAllHistory()" title="Clear All History">🗑️ Clear</button>
+                        </div>
+                        <div id="chat-history-list" class="history-list">
+                            <div class="history-empty">Loading chat history...</div>
                         </div>
                     </div>
+
                 </aside>
 
                 <!-- Sidebar Overlay for Mobile -->
@@ -435,28 +479,6 @@
                             <h2>Welcome to CyberRAG</h2>
                             <p>Your grounded cybersecurity learning assistant. Ask any question to retrieve knowledge chunks and generate student-friendly explanations.</p>
 
-                            <div class="welcome-cards">
-                                <div class="welcome-card" onclick="sendQuickQuestion('What is SQL Injection and how can developers prevent it?')">
-                                    <span class="wc-icon">🛡️</span>
-                                    <h4>What is SQL Injection?</h4>
-                                    <p>Learn mechanics, impact, and prepared statements defense.</p>
-                                </div>
-                                <div class="welcome-card" onclick="sendQuickQuestion('Explain the 3-way handshake of TCP step by step.')">
-                                    <span class="wc-icon">🌐</span>
-                                    <h4>TCP 3-Way Handshake</h4>
-                                    <p>SYN, SYN-ACK, and ACK sequence explained.</p>
-                                </div>
-                                <div class="welcome-card" onclick="sendQuickQuestion('What is OS Credential Dumping in MITRE ATT&CK?')">
-                                    <span class="wc-icon">⚔️</span>
-                                    <h4>LSASS Credential Dumping</h4>
-                                    <p>Mimikatz techniques, sub-techniques, and mitigations.</p>
-                                </div>
-                                <div class="welcome-card" onclick="sendQuickQuestion('What are the four phases of NIST Incident Response?')">
-                                    <span class="wc-icon">🚨</span>
-                                    <h4>Incident Response Lifecycle</h4>
-                                    <p>Preparation, Detection, Containment, and Post-Incident.</p>
-                                </div>
-                            </div>
                         </div>
                     </div>
 

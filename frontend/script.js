@@ -1,13 +1,17 @@
 /**
  * CyberRAG — Cybersecurity Assistance Chatbot
- * Vanilla JavaScript Single-Page App Controller
+ * Vanilla JavaScript Single-Page App Controller with Persistent Chat History
  */
+
+let currentSessionId = null;
+let allSessions = [];
 
 document.addEventListener("DOMContentLoaded", () => {
     initCanvasAnimation();
     initViewNavigation();
     checkSystemStatus();
     loadKnowledgeBaseDocs();
+    loadChatHistory();
 });
 
 function initViewNavigation() {
@@ -38,13 +42,13 @@ function navigateTo(viewName) {
     const targetView = views[viewName] || views.overview;
     targetView.classList.add("active");
 
-    if (viewName === "chat") {
-        document.getElementById("chat-input").focus();
-    } else {
-        setActiveViewNav(viewName);
-        if (viewName === "knowledge-base") loadKnowledgeBaseDocs();
-    }
+    setActiveViewNav(viewName);
     window.scrollTo(0, 0);
+
+    if (viewName === "chat") {
+        document.getElementById("chat-input")?.focus();
+        loadChatHistory();
+    }
 }
 
 function toggleSidebar() {
@@ -155,6 +159,101 @@ async function uploadFile(file) {
     }
 }
 
+// --- PERSISTENT CHAT HISTORY LOGIC ---
+
+async function loadChatHistory() {
+    const container = document.getElementById("chat-history-list");
+    if (!container) return;
+
+    try {
+        const res = await fetch("/api/history");
+        const data = await res.json();
+        allSessions = data.sessions || [];
+        renderHistoryList();
+    } catch (e) {
+        if (container) container.innerHTML = `<div class="history-empty">Failed to load history</div>`;
+    }
+}
+
+function renderHistoryList() {
+    const container = document.getElementById("chat-history-list");
+    if (!container) return;
+
+    if (!allSessions || allSessions.length === 0) {
+        container.innerHTML = `<div class="history-empty">No previous chat sessions</div>`;
+        return;
+    }
+
+    container.innerHTML = allSessions.map(session => {
+        const isActive = session.session_id === currentSessionId ? "active" : "";
+        const title = escapeHtml(session.title || "Cybersecurity Chat");
+        return `
+            <div class="history-item ${isActive}" onclick="loadChatSession('${session.session_id}')">
+                <div class="history-item-info">
+                    <span class="history-item-icon">💬</span>
+                    <span class="history-item-title">${title}</span>
+                </div>
+                <button class="btn-del-session" onclick="deleteHistorySession('${session.session_id}', event)" title="Delete Chat">✕</button>
+            </div>
+        `;
+    }).join("");
+}
+
+async function loadChatSession(sessionId) {
+    currentSessionId = sessionId;
+    renderHistoryList();
+
+    const messagesContainer = document.getElementById("chat-messages");
+    messagesContainer.innerHTML = `<div class="kb-loading">Loading chat session...</div>`;
+
+    try {
+        const res = await fetch(`/api/history/${sessionId}`);
+        const data = await res.json();
+        const messages = data.messages || [];
+
+        messagesContainer.innerHTML = "";
+        if (messages.length === 0) {
+            startNewChat();
+            return;
+        }
+
+        messages.forEach(msg => {
+            if (msg.sender === "user") {
+                appendUserMessage(msg.data.question || msg.data.text || "");
+            } else if (msg.sender === "bot") {
+                appendBotMessage(msg.data);
+            }
+        });
+        scrollToBottom();
+    } catch (err) {
+        messagesContainer.innerHTML = `<div class="kb-loading" style="color:var(--accent-red)">Failed to load session messages.</div>`;
+    }
+}
+
+async function deleteHistorySession(sessionId, event) {
+    if (event) event.stopPropagation();
+    try {
+        await fetch(`/api/history/${sessionId}`, { method: "DELETE" });
+        if (currentSessionId === sessionId) {
+            startNewChat();
+        }
+        loadChatHistory();
+    } catch (err) {
+        alert("Failed to delete session.");
+    }
+}
+
+async function clearAllHistory() {
+    if (!confirm("Are you sure you want to clear all chat history?")) return;
+    try {
+        await fetch("/api/history", { method: "DELETE" });
+        startNewChat();
+        loadChatHistory();
+    } catch (err) {
+        alert("Failed to clear history.");
+    }
+}
+
 // --- CHAT INTERACTION LOGIC ---
 
 function sendQuickQuestion(questionText) {
@@ -166,6 +265,9 @@ function sendQuickQuestion(questionText) {
 }
 
 function startNewChat() {
+    currentSessionId = null;
+    renderHistoryList();
+
     const messagesContainer = document.getElementById("chat-messages");
     messagesContainer.innerHTML = `
         <div class="chat-welcome" id="chat-welcome">
@@ -178,28 +280,6 @@ function startNewChat() {
             </div>
             <h2>Welcome to CyberRAG</h2>
             <p>Your grounded cybersecurity learning assistant. Ask any question to retrieve knowledge chunks and generate student-friendly explanations.</p>
-            <div class="welcome-cards">
-                <div class="welcome-card" onclick="sendQuickQuestion('What is SQL Injection and how can developers prevent it?')">
-                    <span class="wc-icon">🛡️</span>
-                    <h4>What is SQL Injection?</h4>
-                    <p>Learn mechanics, impact, and prepared statements defense.</p>
-                </div>
-                <div class="welcome-card" onclick="sendQuickQuestion('Explain the 3-way handshake of TCP step by step.')">
-                    <span class="wc-icon">🌐</span>
-                    <h4>TCP 3-Way Handshake</h4>
-                    <p>SYN, SYN-ACK, and ACK sequence explained.</p>
-                </div>
-                <div class="welcome-card" onclick="sendQuickQuestion('What is OS Credential Dumping in MITRE ATT&CK?')">
-                    <span class="wc-icon">⚔️</span>
-                    <h4>LSASS Credential Dumping</h4>
-                    <p>Mimikatz techniques, sub-techniques, and mitigations.</p>
-                </div>
-                <div class="welcome-card" onclick="sendQuickQuestion('What are the four phases of NIST Incident Response?')">
-                    <span class="wc-icon">🚨</span>
-                    <h4>Incident Response Lifecycle</h4>
-                    <p>Preparation, Detection, Containment, and Post-Incident.</p>
-                </div>
-            </div>
         </div>
     `;
 }
@@ -240,7 +320,10 @@ async function handleChatSubmit(event) {
         const response = await fetch("/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ question: question })
+            body: JSON.stringify({
+                question: question,
+                session_id: currentSessionId
+            })
         });
 
         hideTypingIndicator();
@@ -252,6 +335,12 @@ async function handleChatSubmit(event) {
         }
 
         const data = await response.json();
+        
+        if (data.session_id) {
+            currentSessionId = data.session_id;
+            loadChatHistory();
+        }
+
         appendBotMessage(data);
 
     } catch (error) {
@@ -294,14 +383,12 @@ function appendBotMessage(data) {
 
     const formattedAnswer = renderMarkdown(data.answer);
     const stepsHtml = renderTransparencySteps(data.transparency_steps, data.elapsed_seconds);
-    const sourcesHtml = renderSourcesDrawer(data.sources);
 
     row.innerHTML = `
         <div class="avatar">CR</div>
         <div class="bubble">
             <div class="bot-answer-text">${formattedAnswer}</div>
             ${stepsHtml}
-            ${sourcesHtml}
         </div>
     `;
 
@@ -415,7 +502,7 @@ function renderMarkdown(text) {
 
     // Headings
     html = html.replace(/^### (.*$)/gim, '<h3>$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2>$1</h2>');
+    html = html.replace(/^## (.*$)/gim, '<h2>$2</h2>');
     html = html.replace(/^# (.*$)/gim, '<h1>$1</h1>');
 
     // Bold & Italic
