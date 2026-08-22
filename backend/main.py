@@ -9,10 +9,10 @@ if str(BASE_DIR) not in sys.path:
     sys.path.insert(0, str(BASE_DIR))
 
 from typing import List, Optional
-from fastapi import FastAPI, HTTPException, UploadFile, File, BackgroundTasks
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi import FastAPI, HTTPException, UploadFile, File  # type: ignore[import-not-found]
+from fastapi.middleware.cors import CORSMiddleware  # type: ignore[import-not-found]
+from starlette.staticfiles import StaticFiles  # type: ignore[import-not-found]
+from starlette.responses import FileResponse  # type: ignore[import-not-found]
 from pydantic import BaseModel, Field
 
 from backend.config import KNOWLEDGE_BASE_DIR, HOST, PORT, is_gemini_configured, GEMINI_MODEL
@@ -184,5 +184,5 @@ if frontend_dir.exists():
         return FileResponse(frontend_dir / "index.html")
 
 if __name__ == "__main__":
-    import uvicorn
+    import uvicorn  # type: ignore[import-not-found]
     uvicorn.run("backend.main:app", host=HOST, port=PORT, reload=True)
