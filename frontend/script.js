@@ -5,6 +5,7 @@
 
 let currentSessionId = null;
 let allSessions = [];
+let currentRole = localStorage.getItem("cyberrag_role") || "student";
 
 document.addEventListener("DOMContentLoaded", () => {
     initCanvasAnimation();
@@ -12,7 +13,34 @@ document.addEventListener("DOMContentLoaded", () => {
     checkSystemStatus();
     loadKnowledgeBaseDocs();
     loadChatHistory();
+    setRole(currentRole);
 });
+
+function setRole(roleName) {
+    currentRole = roleName;
+    localStorage.setItem("cyberrag_role", roleName);
+
+    const btnStudent = document.getElementById("role-btn-student");
+    const btnAdmin = document.getElementById("role-btn-admin");
+    const roleBadge = document.getElementById("role-status-badge");
+    const topbarAdminBtn = document.getElementById("topbar-admin-btn");
+    const btnBackAdmin = document.getElementById("btn-back-admin");
+
+    if (btnStudent) btnStudent.classList.toggle("active", roleName === "student");
+    if (btnAdmin) btnAdmin.classList.toggle("active", roleName === "admin");
+
+    if (roleName === "student") {
+        if (roleBadge) roleBadge.innerText = "🎓 Student Mode";
+        if (topbarAdminBtn) topbarAdminBtn.innerText = "🛡️ Admin Portal";
+        if (btnBackAdmin) btnBackAdmin.innerText = "🛡️ Open Admin Portal";
+        navigateTo("chat");
+    } else {
+        if (roleBadge) roleBadge.innerText = "🛡️ Admin Mode";
+        if (topbarAdminBtn) topbarAdminBtn.innerText = "🎓 Student Chat";
+        if (btnBackAdmin) btnBackAdmin.innerText = "← Admin Dashboard";
+        navigateTo("overview");
+    }
+}
 
 function initViewNavigation() {
     const navLinks = [...document.querySelectorAll('.nav-link[data-view]')];

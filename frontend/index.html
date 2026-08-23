@@ -34,7 +34,16 @@
                 <nav class="nav-links">
                     <a href="#overview" class="nav-link active" data-view="overview">Overview</a>
                     <a href="#knowledge-base" class="nav-link" data-view="knowledge-base">Knowledge Base</a>
+                    <a href="/vector-explorer" target="_blank" class="nav-link" style="color:var(--accent-cyan);">🔍 Vector Explorer</a>
                 </nav>
+                <div class="role-selector-pill">
+                    <button class="role-btn" id="role-btn-student" onclick="setRole('student')">
+                        <span>🎓 Student Mode</span>
+                    </button>
+                    <button class="role-btn" id="role-btn-admin" onclick="setRole('admin')">
+                        <span>🛡️ Admin Portal</span>
+                    </button>
+                </div>
             </header>
 
             <!-- Hero Section -->
@@ -417,8 +426,8 @@
                             <span>New Chat</span>
                         </button>
                         
-                        <button class="btn btn-outline btn-full margin-top-xs" onclick="navigateTo('landing')">
-                            <span>← Back to Landing Page</span>
+                        <button class="btn btn-outline btn-full margin-top-xs" id="btn-back-admin" onclick="setRole('admin')">
+                            <span>🛡️ Open Admin Portal</span>
                         </button>
                     </div>
 
@@ -460,9 +469,12 @@
                         </button>
                         <div class="topbar-title">
                             <span class="chat-title-brand">CyberRAG Chat Assistant</span>
-                            <span class="chat-status-badge">RAG Active</span>
+                            <span class="chat-status-badge" id="role-status-badge">🎓 Student Mode</span>
                         </div>
-                        <button class="btn btn-sm btn-outline" onclick="startNewChat()">Clear Chat</button>
+                        <div class="topbar-actions" style="display:flex; gap:0.5rem; align-items:center;">
+                            <button class="btn btn-sm btn-glow" id="topbar-admin-btn" onclick="setRole('admin')">🛡️ Admin Portal</button>
+                            <button class="btn btn-sm btn-outline" onclick="startNewChat()">Clear Chat</button>
+                        </div>
                     </div>
 
                     <!-- Chat Messages Container -->

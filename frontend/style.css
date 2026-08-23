@@ -283,6 +283,49 @@ body.cyber-theme {
     transform: scaleX(1);
 }
 
+/* ROLE SELECTOR MODE TOGGLE */
+.role-selector-pill {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.25rem;
+    background: rgba(15, 23, 42, 0.85);
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius-full);
+}
+
+.role-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    font-family: var(--font-main);
+    font-size: 0.82rem;
+    font-weight: 600;
+    padding: 0.4rem 0.85rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+}
+
+.role-btn:hover {
+    color: var(--text-primary);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.role-btn.active {
+    background: var(--accent-cyan);
+    color: #040914;
+    font-weight: 700;
+    box-shadow: 0 0 14px rgba(0, 240, 255, 0.35);
+}
+
+#role-btn-admin.active {
+    background: var(--accent-purple);
+    color: #ffffff;
+    box-shadow: 0 0 14px rgba(168, 85, 247, 0.35);
+}
+
 .knowledge-base-page {
     max-width: 1200px;
     margin: 0 auto;
