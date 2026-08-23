@@ -51,11 +51,14 @@ class ChatRequest(BaseModel):
 @app.on_event("startup")
 def auto_ingest_knowledge_base():
     """Runs on backend startup to ensure seed documents are indexed."""
-    stats = db_manager.get_stats()
-    if stats["total_chunks"] == 0:
-        print("[Startup] ChromaDB is empty. Ingesting seed documents from knowledge_base/...")
-        chunks_indexed = ingest_all_documents()
-        print(f"[Startup] Ingestion complete. Indexed {chunks_indexed} chunks.")
+    try:
+        stats = db_manager.get_stats()
+        if stats["total_chunks"] == 0:
+            print("[Startup] ChromaDB is empty. Ingesting seed documents from knowledge_base/...")
+            chunks_indexed = ingest_all_documents()
+            print(f"[Startup] Ingestion complete. Indexed {chunks_indexed} chunks.")
+    except Exception as e:
+        print(f"[Startup Warning] {e}")
 
 def ingest_all_documents() -> int:
     """Helper function to process and index all files in knowledge_base/."""
