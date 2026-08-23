@@ -147,26 +147,28 @@ Provide your grounded answer below:"""
         formatted_context = "\n\n".join(context_blocks)
         full_prompt = self.SYSTEM_PROMPT.format(context=formatted_context, question=question)
 
-        # Try live Gemini API call
+        # Try live Gemini API call with automatic model fallbacks for rate-limits
         if is_gemini_configured():
             if not self.genai_client and not self.legacy_model:
                 self._init_gemini()
 
-            try:
-                if self.genai_client:
-                    response = self.genai_client.models.generate_content(
-                        model=GEMINI_MODEL,
-                        contents=full_prompt
-                    )
-                    if response and hasattr(response, "text") and response.text:
-                        return response.text.strip(), True
-                elif self.legacy_model:
-                    response = self.legacy_model.generate_content(full_prompt)
-                    if response and response.text:
-                        return response.text.strip(), True
-            except Exception as e:
-                print(f"[RAGPipeline] Gemini API Error: {type(e).__name__}: {e}")
-                pass
+            models_to_try = [GEMINI_MODEL, "gemini-2.5-flash", "gemini-1.5-flash", "gemini-2.0-flash"]
+            for model_name in models_to_try:
+                try:
+                    if self.genai_client:
+                        response = self.genai_client.models.generate_content(
+                            model=model_name,
+                            contents=full_prompt
+                        )
+                        if response and hasattr(response, "text") and response.text:
+                            return response.text.strip(), True
+                    elif self.legacy_model:
+                        response = self.legacy_model.generate_content(full_prompt)
+                        if response and response.text:
+                            return response.text.strip(), True
+                except Exception as e:
+                    print(f"[RAGPipeline] Gemini API Notice ({model_name}): {type(e).__name__}: {e}")
+                    continue
 
         # Offline / Fallback mode:
         if is_greeting:
