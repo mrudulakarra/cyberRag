@@ -1609,6 +1609,39 @@ body.cyber-theme {
     40% { transform: scale(1); }
 }
 
+/* CHAT DIAGRAM IMAGE STYLES */
+.chat-image-card {
+    margin: 1rem 0;
+    border: 1px solid var(--accent-cyan);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    background: rgba(15, 23, 42, 0.9);
+    box-shadow: 0 0 25px rgba(0, 240, 255, 0.18);
+    max-width: 680px;
+}
+
+.chat-diagram-img {
+    width: 100%;
+    height: auto;
+    display: block;
+    cursor: zoom-in;
+    transition: transform var(--transition-fast);
+}
+
+.chat-diagram-img:hover {
+    transform: scale(1.02);
+}
+
+.chat-image-caption {
+    padding: 0.6rem 1rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    font-family: var(--font-code);
+    color: var(--accent-cyan);
+    background: rgba(8, 11, 17, 0.95);
+    border-top: 1px solid var(--border-color);
+}
+
 /* CHAT INPUT AREA */
 .chat-input-area {
     padding: 1.25rem 2rem;

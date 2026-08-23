@@ -512,11 +512,16 @@ function renderMarkdown(text) {
     // Blockquotes
     html = html.replace(/^&gt;\s?(.*$)/gim, '<blockquote style="border-left:3px solid var(--accent-cyan); padding-left:0.75rem; color:var(--text-secondary); margin:0.5rem 0;">$1</blockquote>');
 
+    // Markdown Images ![alt](src)
+    html = html.replace(/!\[([^\]]*)\]\(([^)]+)\)/g, (match, alt, src) => {
+        return `<div class="chat-image-card"><img src="${src}" alt="${alt}" class="chat-diagram-img" onclick="window.open('${src}', '_blank')"/><div class="chat-image-caption">📊 ${alt}</div></div>`;
+    });
+
     // Line breaks to paragraphs
     const paragraphs = html.split(/\n\n+/);
     return paragraphs.map(p => {
         p = p.trim();
-        if (p.startsWith('<h') || p.startsWith('<pre') || p.startsWith('<block')) return p;
+        if (p.startsWith('<h') || p.startsWith('<pre') || p.startsWith('<block') || p.startsWith('<div class="chat-image-card"')) return p;
         return `<p>${p.replace(/\n/g, '<br>')}</p>`;
     }).join("");
 }
