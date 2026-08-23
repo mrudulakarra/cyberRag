@@ -1,0 +1,6 @@
+[project]
+name = "cyberrag"
+version = "1.0.0"
+description = "CyberRAG Cybersecurity Assistance Chatbot"
+requires-python = ">=3.11"
+dependencies = []
